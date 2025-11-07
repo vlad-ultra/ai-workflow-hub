@@ -13,4 +13,13 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.post("/", async (req, res, next) => {
+  try {
+    const r = await axios.post(`${TASKS_SERVICE_URL}/tasks`, req.body);
+    res.json(r.data);
+  } catch (e) {
+    next(e);
+  }
+});
+
 module.exports = router;

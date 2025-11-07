@@ -3,6 +3,7 @@ const logger = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
 const tasksRoutes = require("./routes/tasks");
 const authRoutes = require("./routes/auth");
+const aiRoutes = require("./routes/ai");
 
 const app = express();
 app.use(express.json());
@@ -14,6 +15,7 @@ app.get("/health", (req, res) => {
 
 app.use("/tasks", tasksRoutes);
 app.use("/auth", authRoutes);
+app.use("/ai", aiRoutes);
 
 app.use(errorHandler);
 
