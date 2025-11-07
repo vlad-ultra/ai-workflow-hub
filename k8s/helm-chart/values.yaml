@@ -120,26 +120,6 @@ notificationsService:
       cpu: 50m
       memory: 64Mi
 
-# Nginx
-nginx:
-  enabled: true
-  image:
-    repository: nginx
-    tag: alpine
-    pullPolicy: IfNotPresent
-  service:
-    type: NodePort
-    port: 80
-    nodePort: 30080
-  replicaCount: 1
-  resources:
-    limits:
-      cpu: 100m
-      memory: 128Mi
-    requests:
-      cpu: 50m
-      memory: 64Mi
-
 # PostgreSQL
 postgres:
   enabled: true
@@ -194,4 +174,29 @@ secrets:
   postgresUser: "app"
   postgresPassword: "app_password_change_in_production"
   postgresDb: "appdb"
+
+
+# Ingress
+ingress:
+  enabled: true
+  className: "nginx"  # или "traefik", "istio" в зависимости от вашего Ingress Controller
+  serviceName: "api-gateway"  # Проксируем напрямую к API Gateway
+  servicePort: 8080
+  annotations:
+    # Для Nginx Ingress Controller
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    # Для других контроллеров раскомментируйте нужные:
+    # kubernetes.io/ingress.class: nginx
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"  # для TLS
+  hosts:
+    - host: ai-workflow-hub.local  # Измените на ваш домен
+      paths:
+        - path: /
+          pathType: Prefix
+  # TLS конфигурация (опционально)
+  tls: []
+    # - secretName: ai-workflow-hub-tls
+    #   hosts:
+    #     - ai-workflow-hub.local
 
