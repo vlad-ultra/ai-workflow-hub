@@ -1,0 +1,92 @@
+version: "3.9"
+
+services:
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:4000
+      - USER_SERVICE_URL=http://user-service:4001
+      - TASKS_SERVICE_URL=http://tasks-service:4002
+      - AI_SERVICE_URL=http://ai-assistant-service:4003
+    depends_on:
+      - auth-service
+      - user-service
+      - tasks-service
+      - ai-assistant-service
+    networks:
+      - backend
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    environment:
+      - PORT=4000
+      - JWT_SECRET=supersecret
+    networks:
+      - backend
+
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    environment:
+      - PORT=4001
+    networks:
+      - backend
+
+  tasks-service:
+    build: ./tasks-service
+    container_name: tasks-service
+    environment:
+      - PORT=4002
+    networks:
+      - backend
+
+  ai-assistant-service:
+    build: ./ai-assistant-service
+    container_name: ai-assistant-service
+    environment:
+      - PORT=4003
+    networks:
+      - backend
+
+  notifications-service:
+    build: ./notifications-service
+    container_name: notifications-service
+    environment:
+      - PORT=4004
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+    networks:
+      - backend
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=app
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+
+networks:
+  backend:
+
+volumes:
+  postgres_data:
