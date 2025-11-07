@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+  labels:
+    app: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+data:
+  AUTH_SERVICE_URL: {{ .Values.config.authServiceUrl | quote }}
+  USER_SERVICE_URL: {{ .Values.config.userServiceUrl | quote }}
+  TASKS_SERVICE_URL: {{ .Values.config.tasksServiceUrl | quote }}
+  AI_SERVICE_URL: {{ .Values.config.aiServiceUrl | quote }}
+  REDIS_HOST: {{ .Values.config.redisHost | quote }}
+  REDIS_PORT: {{ .Values.config.redisPort | quote }}
+
